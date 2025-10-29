@@ -84,7 +84,7 @@ This section explains the technical decisions made for this project.
 ### Why an HTTPS Certificate? (Securing LAN Services)
 
 * **The Problem (LAN Security):** By default, the Pi-hole admin panel is served over unencrypted HTTP. While internal, this violates the Zero Trust principle, allowing users or compromised devices on the LAN to sniff login credentials in clear text.
-* **The Solution:** I implemented a **Local Certificate Authority (CA)** model. This involved deploying a dedicated **Reverse Proxy** [Caddy] to serve a custom certificate signed by the Local CA.
+* **The Solution:** I implemented a **Local Certificate Authority (CA)** model. This involved deploying a dedicated **Caddy Reverse Proxy** to serve a custom certificate signed by the Local CA.
 * **The Value:** This enforces an encrypted HTTPS connection on the local network. After manually trusting the CA's root certificate on approved devices, all LAN traffic to the Pi-hole is secured with a trusted lock icon, upholding the Zero Trust model.
 
 ### Why HTTPS via Tailscale? (Securing Remote Services)
