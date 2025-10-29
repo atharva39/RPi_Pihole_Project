@@ -96,9 +96,9 @@ This section explains the technical decisions made for this project.
 
 ### Why an HTTPS Certificate? (Securing Internal Services)
 
-* **The Problem:** By default, the Pi-hole admin panel is served over unencrypted HTTP. While this is on my internal network, it's bad security practice. Any user (or compromised device) on my Wi-Fi could potentially sniff the login credentials in clear text.
-* **The Solution:** I plan to deploy a reverse proxy (like Nginx, Caddy, or Traefik) to manage an SSL/TLS certificate for the Pi-hole web interface.
-* **The Value:** This enforces an encrypted HTTPS connection, preventing credential sniffing on the local network. It adheres to a **Zero Trust** security model ("never trust, always verify"), where even internal traffic is secured. It also removes browser security warnings and demonstrates a professional approach to securing all web-based services, not just public-facing ones.
+* **The Problem (LAN Security):** By default, the $\text{Pi-hole}$ admin panel is served over unencrypted $\text{HTTP}$. While internal, this violates the Zero Trust principle, allowing users or compromised devices on the $\text{LAN}$ to sniff login credentials in clear text.
+* **The Solution:** I implemented a Local Certificate Authority ($\text{CA}$) model. This involved deploying a dedicated Reverse Proxy ($\text{Caddy}$) to serve a custom certificate signed by the $\text{Local CA}$.
+* **The Value:** This enforces an encrypted $\text{HTTPS}$ connection on the local network. After manually trusting the $\text{CA}$'s root certificate on approved devices, all $\text{LAN}$ traffic to the $\text{Pi-hole}$ is secured with a trusted lock icon, upholding the Zero Trust model.
 
 ---
 
