@@ -30,12 +30,12 @@ This flow illustrates how local clients resolve DNS queries by using the Pi-hole
 1.  **Local Client:** A device on the network requests `google.com`.
 2.  **Router (DHCP):** The router's DHCP server assigns the Pi-hole's IP address as the *only* DNS server to the client.
 3.  **Pi-hole:** The request hits the Pi-hole.
-   If `google.com` is on a blocklist, Pi-hole returns `0.0.0.0`, and the request stops.
-   If allowed, Pi-hole forwards the request to its *only* upstream resolver: `127.0.0.1#5335` (Unbound).
+    * If `google.com` is on a blocklist, Pi-hole returns `0.0.0.0`, and the request stops.
+    * If allowed, Pi-hole forwards the request to its *only* upstream resolver: `127.0.0.1#5335` (Unbound).
 4.  **Unbound:** Unbound receives the query and performs a **recursive lookup**.
-   It queries the Internet's root DNS servers (`.`).
-   Then queries the `.com` TLD servers.
-   Then queries Google's authoritative nameservers for the IP address.
+    * It queries the Internet's root DNS servers (`.`).
+    * Then queries the `.com` TLD servers.
+    * Then queries Google's authoritative nameservers for the IP address.
 5.  **Response:** Unbound receives the IP and validates it using **DNSSEC**. It passes the answer back to Pi-hole, which passes it to the client.
 
 ### Network Traffic Flow: Tailscale VPN Access
