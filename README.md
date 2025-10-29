@@ -56,10 +56,13 @@ This flow illustrates how remote clients maintain privacy and security by using 
 4.  **Unbound:** Unbound performs a **recursive lookup** and **DNSSEC validation** (Steps 4 and 5 of the LAN flow).
 5.  **Response:** The valid, secure IP address is passed back through the following path:
     * Unbound $\rightarrow$ Pi-hole $\rightarrow$ **Tailscale Tunnel (Encrypted)** $\rightarrow$ Remote Client.
+  
+### HTTPS Access (Dual Security Model)
 
-#### Accessing the Web Interface (HTTPS Secure)
-
-When accessing the Pi-hole admin panel:
+| Access Method | Certificate Source | Implementation |
+| :--- | :--- | :--- |
+| **Remote (VPN)** | **Tailscale MagicDNS (Let's Encrypt)** | **Tailscale** intercepted traffic on port 443, presented the **valid Let's Encrypt certificate**, and securely proxied the decrypted request to the local web server. |
+| **Local (LAN)** | **Local Certificate Authority (CA)** | A dedicated **Reverse Proxy** was deployed to serve a certificate signed by a **private Local CA**. The CA's root certificate was manually installed on trusted LAN devices, securing the LAN connection with a trusted lock icon. |
 
 1.  **Client Request:** A remote client requests the Admin page using the secure MagicDNS hostname (e.g., `https://pringles.ts.net/admin/`).
 2.  **Tailscale Interception:** The **`tailscaled`** process on the Pi-hole intercepts the request on port 443.
