@@ -21,7 +21,7 @@ This setup is augmented with Tailscale to provide secure, zero-trust remote acce
 * **DNS Filtering:** Pi-hole
 * **DNS Resolution:** Unbound
 * **Secure Access:** Tailscale
-* **Web Interface Security:** SSL/TLS Certificate (via Let's Encrypt / Caddy / Nginx - *[Note: Add the one you plan to use]* )
+* **Web Interface Security:** SSL/TLS Certificate (via Tailscale MagicDNS HTTPS / Let's Encrypt)
 
 ### Network Traffic Flow:
 
