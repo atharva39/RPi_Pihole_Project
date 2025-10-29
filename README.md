@@ -56,20 +56,7 @@ This flow illustrates how remote clients maintain privacy and security by using 
 4.  **Unbound:** Unbound performs a **recursive lookup** and **DNSSEC validation** (Steps 4 and 5 of the LAN flow).
 5.  **Response:** The valid, secure IP address is passed back through the following path:
     * Unbound $\rightarrow$ Pi-hole $\rightarrow$ **Tailscale Tunnel (Encrypted)** $\rightarrow$ Remote Client.
-  
-### HTTPS Access (Dual Security Model)
-
-| Access Method | Certificate Source | Implementation |
-| :--- | :--- | :--- |
-| **Remote (VPN)** | **Tailscale MagicDNS (Let's Encrypt)** | **Tailscale** intercepted traffic on port 443, presented the **valid Let's Encrypt certificate**, and securely proxied the decrypted request to the local web server. |
-| **Local (LAN)** | **Local Certificate Authority (CA)** | A dedicated **Reverse Proxy** was deployed to serve a certificate signed by a **private Local CA**. The CA's root certificate was manually installed on trusted LAN devices, securing the LAN connection with a trusted lock icon. |
-
-1.  **Client Request:** A remote client requests the Admin page using the secure MagicDNS hostname (e.g., `https://pringles.ts.net/admin/`).
-2.  **Tailscale Interception:** The **`tailscaled`** process on the Pi-hole intercepts the request on port 443.
-3.  **Certificate Handshake:** Tailscale presents the **valid Let's Encrypt certificate** (provisioned via MagicDNS HTTPS) to the browser.
-4.  **Proxy:** Tailscale decrypts the traffic and uses the **`tailscale serve`** command to forward the request to the local web server (**Lighttpd** running on unencrypted `http://127.0.0.1:80`).
-5.  **Secure Access:** The Pi-hole web interface loads securely in the browser, showing the valid lock icon.
-
+   
 ---
 
 ## 3. Key Features & Rationale (The "Why")
@@ -99,6 +86,12 @@ This section explains the technical decisions made for this project.
 * **The Problem (LAN Security):** By default, the $\text{Pi-hole}$ admin panel is served over unencrypted $\text{HTTP}$. While internal, this violates the Zero Trust principle, allowing users or compromised devices on the $\text{LAN}$ to sniff login credentials in clear text.
 * **The Solution:** I implemented a Local Certificate Authority ($\text{CA}$) model. This involved deploying a dedicated Reverse Proxy ($\text{Caddy}$) to serve a custom certificate signed by the $\text{Local CA}$.
 * **The Value:** This enforces an encrypted $\text{HTTPS}$ connection on the local network. After manually trusting the $\text{CA}$'s root certificate on approved devices, all $\text{LAN}$ traffic to the $\text{Pi-hole}$ is secured with a trusted lock icon, upholding the Zero Trust model.
+
+### Why HTTPS via Tailscale? (Securing Remote Services)
+
+* **The Problem (Remote Access):** Accessing the $\text{Pi-hole}$ over the $\text{VPN}$ required a publicly trusted certificate, but the $\text{CGNAT}$ restriction prevented standard certificate acquisition ($\text{HTTP-01}$ challenge).
+* **The Solution:** I leveraged $\text{Tailscale}$'s MagicDNS HTTPS feature. This service automatically provisioned a Let's Encrypt certificate for the $\text{Pi's Tailscale hostname}$. The $\text{tailscale serve}$ command was configured to intercept the secure traffic on $\text{443}$ and proxy it to the local $\text{Lighttpd}$ on $\text{80}$.
+* **The Value:** This provided immediate, end-to-end encrypted remote access to the $\text{Pi-hole}$ Admin panel from anywhere globally, without requiring any port forwarding or complex public DNS setup.
 
 ---
 
