@@ -108,7 +108,6 @@ Building this system provided valuable troubleshooting experience:
     * **Solution:** I corrected the configuration file and used `unbound-checkconf` to validate the syntax before restarting the service, which resolved the issue.
 
 ---
-
 ## 5. Future Plans
 
 * [ ] Segregate IoT devices onto a separate VLAN to further isolate them from trusted clients.
