@@ -77,7 +77,7 @@ This section explains the technical decisions made for this project.
 
 ### Why Tailscale? (Secure Access & CGNAT Traversal)
 
-* **The Problem:** My ISP (Airtel) uses **CGNAT (Carrier-Grade NAT)**, meaning I do not have a unique, public IPv4 address. This makes it impossible to open ports or run a traditional VPN (like WireGuard or OpenVPN) to access my home network from outside.
+* **The Problem:** My ISP uses **CGNAT (Carrier-Grade NAT)**, meaning I do not have a unique, public IPv4 address. This makes it impossible to open ports or run a traditional VPN (like WireGuard or OpenVPN) to access my home network from outside.
 * **The Solution:** I deployed **Tailscale**, a **zero-config mesh VPN** (or "overlay network"). Tailscale creates an end-to-end encrypted network over the public internet, using WireGuard® as its foundation.
 * **The Value:** Tailscale's "magic DNS" and NAT traversal capabilities allow me to connect to my Pi-hole (e.g., `http://pringles`) from my phone or laptop anywhere in the world, *without* any port forwarding. It establishes a direct, secure tunnel, solving the CGNAT problem and allowing me to manage my home network and use my own private DNS resolver securely on the go.
 
