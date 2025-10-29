@@ -81,18 +81,18 @@ This section explains the technical decisions made for this project.
 * **The Solution:** I deployed **Tailscale**, a **zero-config mesh VPN** (or "overlay network"). Tailscale creates an end-to-end encrypted network over the public internet, using WireGuard® as its foundation.
 * **The Value:** Tailscale's "magic DNS" and NAT traversal capabilities allow me to connect to my Pi-hole (e.g., `http://pringles`) from my phone or laptop anywhere in the world, *without* any port forwarding. It establishes a direct, secure tunnel, solving the CGNAT problem and allowing me to manage my home network and use my own private DNS resolver securely on the go.
 
-### Why an HTTPS Certificate? (Securing Internal Services)
+### Why an HTTPS Certificate? (Securing LAN Services)
 
-* **The Problem (LAN Security):** By default, the $\text{Pi-hole}$ admin panel is served over unencrypted $\text{HTTP}$. While internal, this violates the Zero Trust principle, allowing users or compromised devices on the $\text{LAN}$ to sniff login credentials in clear text.
-* **The Solution:** I implemented a Local Certificate Authority ($\text{CA}$) model. This involved deploying a dedicated Reverse Proxy ($\text{Caddy}$) to serve a custom certificate signed by the $\text{Local CA}$.
-* **The Value:** This enforces an encrypted $\text{HTTPS}$ connection on the local network. After manually trusting the $\text{CA}$'s root certificate on approved devices, all $\text{LAN}$ traffic to the $\text{Pi-hole}$ is secured with a trusted lock icon, upholding the Zero Trust model.
+* **The Problem (LAN Security):** By default, the Pi-hole admin panel is served over unencrypted HTTP. While internal, this violates the Zero Trust principle, allowing users or compromised devices on the LAN to sniff login credentials in clear text.
+* **The Solution:** I implemented a **Local Certificate Authority (CA)** model. This involved deploying a dedicated **Reverse Proxy** to serve a custom certificate signed by the Local CA.
+* **The Value:** This enforces an encrypted HTTPS connection on the local network. After manually trusting the CA's root certificate on approved devices, all LAN traffic to the Pi-hole is secured with a trusted lock icon, upholding the Zero Trust model.
 
 ### Why HTTPS via Tailscale? (Securing Remote Services)
 
-* **The Problem (Remote Access):** Accessing the $\text{Pi-hole}$ over the $\text{VPN}$ required a publicly trusted certificate, but the $\text{CGNAT}$ restriction prevented standard certificate acquisition ($\text{HTTP-01}$ challenge).
-* **The Solution:** I leveraged $\text{Tailscale}$'s MagicDNS HTTPS feature. This service automatically provisioned a Let's Encrypt certificate for the $\text{Pi's Tailscale hostname}$. The $\text{tailscale serve}$ command was configured to intercept the secure traffic on $\text{443}$ and proxy it to the local $\text{Lighttpd}$ on $\text{80}$.
-* **The Value:** This provided immediate, end-to-end encrypted remote access to the $\text{Pi-hole}$ Admin panel from anywhere globally, without requiring any port forwarding or complex public DNS setup.
-
+* **The Problem (Remote Access):** Accessing the Pi-hole over the VPN required a publicly trusted certificate, but the CGNAT restriction prevented standard certificate acquisition (HTTP-01 challenge).
+* **The Solution:** I leveraged **Tailscale's MagicDNS HTTPS** feature. This service automatically provisioned a **Let's Encrypt certificate** for the Pi's Tailscale hostname. The `tailscale serve` command was configured to intercept the secure traffic on 443 and proxy it to the local web server on 80.
+* **The Value:** This provided immediate, end-to-end encrypted remote access to the Pi-hole Admin panel from anywhere globally, without requiring any port forwarding or complex public DNS setup.
+  
 ---
 
 ## 4. Challenges & Troubleshooting
