@@ -23,7 +23,9 @@ This setup is augmented with Tailscale to provide secure, zero-trust remote acce
 * **Secure Access:** Tailscale
 * **Web Interface Security:** SSL/TLS Certificate (via Tailscale MagicDNS HTTPS / Let's Encrypt)
 
-### Network Traffic Flow:
+### Network Traffic Flow: LAN Access
+
+This flow illustrates how local clients resolve DNS queries by using the Pi-hole as the network's only recursive DNS server, ensuring all traffic is filtered before leaving the local network.
 
 1.  **Local Client:** A device on the network requests `google.com`.
 2.  **Router (DHCP):** The router's DHCP server assigns the Pi-hole's IP address as the *only* DNS server to the client.
@@ -35,6 +37,31 @@ This setup is augmented with Tailscale to provide secure, zero-trust remote acce
     * Then queries the `.com` TLD servers.
     * Then queries Google's authoritative nameservers for the IP address.
 5.  **Response:** Unbound receives the IP and validates it using **DNSSEC**. It passes the answer back to Pi-hole, which passes it to the client.
+
+### Network Traffic Flow: Tailscale VPN Access
+
+This flow illustrates how remote clients maintain privacy and security by using the home network's DNS services through the encrypted Tailscale tunnel, which is essential for bypassing CGNAT restrictions.
+
+1.  **Remote Client (VPN Connected):** A device (e.g., a laptop or phone outside the home) connects to the **Tailnet** via the Tailscale VPN app.
+2.  **DNS Routing (Tailscale MagicDNS):**
+    * The Tailscale client detects that the Pi-hole's IP (the machine running the Pi-hole/Unbound stack) is set as the **Global Nameserver** for the Tailnet.
+    * The client's OS routes all DNS queries through the **encrypted WireGuard tunnel** to the Pi-hole machine's **Tailscale IP (100.x.x.x)**.
+3.  **Pi-hole:** The request arrives at the Pi-hole on its `tailscale0` interface.
+    * **Filtering:** Pi-hole processes the request against blocklists (If blocked, returns `0.0.0.0`).
+    * **Forwarding:** If allowed, Pi-hole forwards the request to its upstream resolver: `127.0.0.1#5335` (Unbound).
+4.  **Unbound:** Unbound performs a **recursive lookup** and **DNSSEC validation** (Steps 4 and 5 of the LAN flow).
+5.  **Response:** The valid, secure IP address is passed back through the following path:
+    * Unbound $\rightarrow$ Pi-hole $\rightarrow$ **Tailscale Tunnel (Encrypted)** $\rightarrow$ Remote Client.
+
+#### Accessing the Web Interface (HTTPS Secure)
+
+When accessing the Pi-hole admin panel:
+
+1.  **Client Request:** A remote client requests the Admin page using the secure MagicDNS hostname (e.g., `https://pringles.ts.net/admin/`).
+2.  **Tailscale Interception:** The **`tailscaled`** process on the Pi-hole intercepts the request on port 443.
+3.  **Certificate Handshake:** Tailscale presents the **valid Let's Encrypt certificate** (provisioned via MagicDNS HTTPS) to the browser.
+4.  **Proxy:** Tailscale decrypts the traffic and uses the **`tailscale serve`** command to forward the request to the local web server (**Lighttpd** running on unencrypted `http://127.0.0.1:80`).
+5.  **Secure Access:** The Pi-hole web interface loads securely in the browser, showing the valid lock icon.
 
 ---
 
