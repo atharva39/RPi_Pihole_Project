@@ -16,7 +16,9 @@ This setup is augmented with Tailscale to provide secure, zero-trust remote acce
 
 ## 2. Technical Architecture
 
-### 📊 Current Status & Dashboard ![Pi-hole Dashboard Screenshot](images/Pi-Hole_Dashboard.png)
+### 📊 Current Status & Dashboard 
+
+![Pi-hole Dashboard Screenshot](images/Pi-Hole_Dashboard.png)
 
 ### Core Components:
 * **Hardware:** Raspberry Pi Zero 2W
