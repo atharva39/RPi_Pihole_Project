@@ -101,7 +101,7 @@ This section explains the technical decisions made for this project.
 Building this system provided valuable troubleshooting experience:
 
 * **Initial DNS Leak:** After the initial setup, `dnsleaktest.com` showed that queries were still resolving to Cloudflare.
-    * **Root Cause:** The browser's built-in **DNS-over-HTTPS (DoH)** feature was bypassing the OS-level DNS settings and sending queries directly to Google.
+    * **Root Cause:** The browser's built-in **DNS-over-HTTPS (DoH)** feature was bypassing the OS-level DNS settings and sending queries directly to Cloudflare.
        ![DNS Leak Test - Problem](images/DNS_Leak_Test_Before.png)
       
     * **Solution:** I disabled DoH in the browser settings, which forced all queries to correctly route through the Pi-hole -> Unbound chain. This highlighted the conflict between local DNS control and modern application-layer protocols.
