@@ -101,12 +101,15 @@ This section explains the technical decisions made for this project.
 Building this system provided valuable troubleshooting experience:
 
 * **Initial DNS Leak:** After the initial setup, `dnsleaktest.com` showed that queries were still resolving to Cloudflare.
-    * **Root Cause:** The browser's built-in **DNS-over-HTTPS (DoH)** feature was bypassing the OS-level DNS settings and sending queries directly to Cloudflare.
+    * **Root Cause:** The browser's built-in **DNS-over-HTTPS (DoH)** feature was bypassing the OS-level DNS settings and sending queries directly to Google.
+     ![DNS Leak Test - Problem](images/DNS_Leak_Test_Before.png)
     * **Solution:** I disabled DoH in the browser settings, which forced all queries to correctly route through the Pi-hole -> Unbound chain. This highlighted the conflict between local DNS control and modern application-layer protocols.
+     ![DNS Leak Test - Solution](images/DNS_Leak_Test_After.png)
 
 * **Unbound Service Failure:** The `unbound.service` repeatedly failed to start.
     * **Root Cause:** Using `journalctl -xeu unbound.service`, I identified a syntax error in `/etc/unbound/unbound.conf.d/pi-hole.conf`. A commented-out line was copied without its leading `#` symbol, causing the parser to fail.
     * **Solution:** I corrected the configuration file and used `unbound-checkconf` to validate the syntax before restarting the service, which resolved the issue.
+     ![Dig command confirming local Unbound is working](images/Unbound_Working.png)
 
 ---
 ## 5. Future Plans
