@@ -93,6 +93,8 @@ This section explains the technical decisions made for this project.
 * **The Solution:** I leveraged **Tailscale's MagicDNS HTTPS** feature. This service automatically provisioned a **Let's Encrypt certificate** for the Pi's Tailscale hostname. The `tailscale serve` command was configured to intercept the secure traffic on 443 and proxy it to the local web server on 80.
 * **The Value:** This provided immediate, end-to-end encrypted remote access to the Pi-hole Admin panel from anywhere globally, without requiring any port forwarding or complex public DNS setup.
 * **Subnet Routing:** To ensure full connectivity, the Raspberry Pi was configured as a **Subnet Router**, advertising a specific `/32` route to allow granular, secure access to the router's admin interface (`192.168.1.1`) over the VPN.
+
+![HTTPS connection over tailscale](images/HTTPS_Lock_VPN.png)
   
 ---
 
