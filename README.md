@@ -109,7 +109,7 @@ Building this system provided valuable troubleshooting experience:
        ![DNS Leak Test - Problem](images/DNS_Leak_Test_Before.png)
       
     * **Solution:** I disabled DoH in the browser settings, which forced all queries to correctly route through the Pi-hole -> Unbound chain. This highlighted the conflict between local DNS control and modern application-layer protocols.
-      ![DNS Leak Test - Solution](images/DNS_Leak_Test_After.png)
+      ![DNS Leak Test - Solution](images/DNS_Leak_Test_after.png)
 
 * **Unbound Service Failure:** The `unbound.service` repeatedly failed to start.
     * **Root Cause:** Using `journalctl -xeu unbound.service`, I identified a syntax error in `/etc/unbound/unbound.conf.d/pi-hole.conf`. A commented-out line was copied without its leading `#` symbol, causing the parser to fail.
